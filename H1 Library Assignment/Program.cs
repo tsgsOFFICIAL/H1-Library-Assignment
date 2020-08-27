@@ -156,6 +156,8 @@ namespace H1_Library_Assignment
 
         static void BorrowABook()
         {
+            Stack<uint> booksIWant = new Stack<uint>();
+
             ShowBooks(false, false);
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine();
@@ -163,27 +165,37 @@ namespace H1_Library_Assignment
             Console.WriteLine("               Pick a book to borrow              ");
             Console.WriteLine("==================================================");
             Console.WriteLine();
-            Console.Write("Book ID: ");
-            try
+            Console.WriteLine("Enter all the ID's you wish to borrow, one at a time, and finish by pressing enter");
+
+            bool run = true;
+            while (run)
             {
-                uint input = Convert.ToUInt32(Console.ReadLine());
+                Console.Write("Book ID: ");
+                try
+                {
+                    booksIWant.Push(Convert.ToUInt32(Console.ReadLine()));
+                }
+                catch (Exception)
+                {
+                    run = false;
+                }
+            }
+
+            for (int i = booksIWant.Count; i > 0; i--)
+            {
                 foreach (Book book in books)
                 {
-                    if (book.ID == input)
+                    if (booksIWant.Peek() == book.ID && book.Available)
                     {
+                        booksIWant.Pop();
                         booksBorrowed.Add(book);
                         book.Available = false;
                         Console.WriteLine($"Successfully borrowed {book.Name} by {book.Author}, written in {book.ReleaseDate}");
-                        System.Threading.Thread.Sleep(2000);
                         break;
                     }
                 }
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Thats not a valid book id!");
-                System.Threading.Thread.Sleep(2000);
-            }
+            System.Threading.Thread.Sleep(2000);
         }
 
 
